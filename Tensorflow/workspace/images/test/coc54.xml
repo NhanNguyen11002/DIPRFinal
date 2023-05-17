@@ -1,0 +1,26 @@
+<annotation>
+	<folder>trai_cay_320_320</folder>
+	<filename>coc54.bmp</filename>
+	<path>C:\Nhan\Nam3\Ki2\Xulianh\traicay\TraiCayDataSet_SV\trai_cay_320_320\coc54.bmp</path>
+	<source>
+		<database>Unknown</database>
+	</source>
+	<size>
+		<width>320</width>
+		<height>320</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>coc</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>53</xmin>
+			<ymin>83</ymin>
+			<xmax>234</xmax>
+			<ymax>288</ymax>
+		</bndbox>
+	</object>
+</annotation>

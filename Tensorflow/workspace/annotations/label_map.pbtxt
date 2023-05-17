@@ -1,0 +1,8 @@
+item { 
+	name:'coc'
+	id:1
+}
+item { 
+	name:'oi'
+	id:2
+}

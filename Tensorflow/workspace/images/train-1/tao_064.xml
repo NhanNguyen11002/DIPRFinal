@@ -1,0 +1,26 @@
+<annotation>
+	<folder>trai_cay_320_320</folder>
+	<filename>tao_064.bmp</filename>
+	<path>d:\TraiCayDataSet\trai_cay_320_320\tao_064.bmp</path>
+	<source>
+		<database>Unknown</database>
+	</source>
+	<size>
+		<width>320</width>
+		<height>320</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>tao</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>80</xmin>
+			<ymin>98</ymin>
+			<xmax>231</xmax>
+			<ymax>266</ymax>
+		</bndbox>
+	</object>
+</annotation>

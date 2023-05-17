@@ -1,0 +1,26 @@
+<annotation>
+	<folder>trai_cay_320_320</folder>
+	<filename>oi71.bmp</filename>
+	<path>C:\Nhan\Nam3\Ki2\Xulianh\traicay\TraiCayDataSet_SV\trai_cay_320_320\oi71.bmp</path>
+	<source>
+		<database>Unknown</database>
+	</source>
+	<size>
+		<width>320</width>
+		<height>320</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>oi</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>49</xmin>
+			<ymin>54</ymin>
+			<xmax>245</xmax>
+			<ymax>240</ymax>
+		</bndbox>
+	</object>
+</annotation>
