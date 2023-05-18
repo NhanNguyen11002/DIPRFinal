@@ -46,133 +46,138 @@ def visualize(input, faces, fps, thickness=2):
             cv.circle(input, (coords[10], coords[11]), 2, (255, 0, 255), thickness)
             cv.circle(input, (coords[12], coords[13]), 2, (0, 255, 255), thickness)
     cv.putText(input, 'FPS: {:.2f}'.format(fps), (1, 16), cv.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
-
-if __name__ == '__main__':
-
-    video_container = st.empty()
-
-    detector = cv.FaceDetectorYN.create(
-        args.face_detection_model,
-        "",
-        (320, 320),
-        args.score_threshold,
-        args.nms_threshold,
-        args.top_k
-    )
-    ## [initialize_FaceDetectorYN]
-
-    tm = cv.TickMeter()
-
-    # If input is an image
-    if args.image1 is not None:
-        img1 = cv.imread(cv.samples.findFile(args.image1))
-        img1Width = int(img1.shape[1]*args.scale)
-        img1Height = int(img1.shape[0]*args.scale)
-
-        img1 = cv.resize(img1, (img1Width, img1Height))
-        tm.start()
-
-        ## [inference]
-        # Set input size before inference
-        detector.setInputSize((img1Width, img1Height))
-
-        faces1 = detector.detect(img1)
-        ## [inference]
-
-        tm.stop()
-        assert faces1[1] is not None, 'Cannot find a face in {}'.format(args.image1)
-
-        # Draw results on the input image
-        visualize(img1, faces1, tm.getFPS())
-
-        # Save results if save is true
-        if args.save:
-            print('Results saved to result.jpg\n')
-            cv.imwrite('result.jpg', img1)
-
-        # Visualize results in a new window
-        cv.imshow("image1", img1)
-
-        if args.image2 is not None:
-            img2 = cv.imread(cv.samples.findFile(args.image2))
-
-            tm.reset()
-            tm.start()
-            detector.setInputSize((img2.shape[1], img2.shape[0]))
-            faces2 = detector.detect(img2)
-            tm.stop()
-            assert faces2[1] is not None, 'Cannot find a face in {}'.format(args.image2)
-            visualize(img2, faces2, tm.getFPS())
-            cv.imshow("image2", img2)
-
-            ## [initialize_FaceRecognizerSF]
-            recognizer = cv.FaceRecognizerSF.create(
-            args.face_recognition_model,"")
-            ## [initialize_FaceRecognizerSF]
-
-            ## [facerecognizer]
-            # Align faces
-            face1_align = recognizer.alignCrop(img1, faces1[1][0])
-            face2_align = recognizer.alignCrop(img2, faces2[1][0])
-
-            # Extract features
-            face1_feature = recognizer.feature(face1_align)
-            face2_feature = recognizer.feature(face2_align)
-            ## [facerecognizer]
-
-            cosine_similarity_threshold = 0.363
-            l2_similarity_threshold = 1.128
-
-            ## [match]
-            cosine_score = recognizer.match(face1_feature, face2_feature, cv.FaceRecognizerSF_FR_COSINE)
-            l2_score = recognizer.match(face1_feature, face2_feature, cv.FaceRecognizerSF_FR_NORM_L2)
-            ## [match]
-
-            msg = 'different identities'
-            if cosine_score >= cosine_similarity_threshold:
-                msg = 'the same identity'
-            print('They have {}. Cosine Similarity: {}, threshold: {} (higher value means higher similarity, max 1.0).'.format(msg, cosine_score, cosine_similarity_threshold))
-
-            msg = 'different identities'
-            if l2_score <= l2_similarity_threshold:
-                msg = 'the same identity'
-            print('They have {}. NormL2 Distance: {}, threshold: {} (lower value means higher similarity, min 0.0).'.format(msg, l2_score, l2_similarity_threshold))
-        cv.waitKey(0)
-    else: # Omit input to call default camera
-        if args.video is not None:
-            deviceId = args.video
-        else:
-            deviceId = 0
-    # Kết nối đến camera
-    cap = cv2.VideoCapture(0)
-    frameWidth = int(cap.get(cv.CAP_PROP_FRAME_WIDTH)*args.scale)
-    frameHeight = int(cap.get(cv.CAP_PROP_FRAME_HEIGHT)*args.scale)
-    detector.setInputSize([frameWidth, frameHeight])
-
-    # Lặp vô hạn để lấy và hiển thị các khung hình từ video
-    while True:
-        # Đọc khung hình từ camera
-        ret, frame = cap.read()
-
-        # Kiểm tra xem có thành công đọc khung hình hay không
-        if not ret:
-            break
+start_btn = st.button('START')
+if start_btn:
+    if __name__ == '__main__':
         
-        frame = cv.resize(frame, (frameWidth, frameHeight))
-        # Inference
-        tm.start()
-        faces = detector.detect(frame) # faces is a tuple
-        tm.stop()
+        video_container = st.empty()
 
-        # Draw results on the input image
-        visualize(frame, faces, tm.getFPS())
+        detector = cv.FaceDetectorYN.create(
+            args.face_detection_model,
+            "",
+            (320, 320),
+            args.score_threshold,
+            args.nms_threshold,
+            args.top_k
+        )
+        ## [initialize_FaceDetectorYN]
 
-       
-        # Hiển thị khung hình trong container
-        video_container.image(frame, channels="BGR")
+        tm = cv.TickMeter()
 
-    # Giải phóng tài nguyên và đóng camera khi kết thúc
-    cap.release()
+        # If input is an image
+        if args.image1 is not None:
+            img1 = cv.imread(cv.samples.findFile(args.image1))
+            img1Width = int(img1.shape[1]*args.scale)
+            img1Height = int(img1.shape[0]*args.scale)
+
+            img1 = cv.resize(img1, (img1Width, img1Height))
+            tm.start()
+
+            ## [inference]
+            # Set input size before inference
+            detector.setInputSize((img1Width, img1Height))
+
+            faces1 = detector.detect(img1)
+            ## [inference]
+
+            tm.stop()
+            assert faces1[1] is not None, 'Cannot find a face in {}'.format(args.image1)
+
+            # Draw results on the input image
+            visualize(img1, faces1, tm.getFPS())
+
+            # Save results if save is true
+            if args.save:
+                print('Results saved to result.jpg\n')
+                cv.imwrite('result.jpg', img1)
+
+            # Visualize results in a new window
+            cv.imshow("image1", img1)
+
+            if args.image2 is not None:
+                img2 = cv.imread(cv.samples.findFile(args.image2))
+
+                tm.reset()
+                tm.start()
+                detector.setInputSize((img2.shape[1], img2.shape[0]))
+                faces2 = detector.detect(img2)
+                tm.stop()
+                assert faces2[1] is not None, 'Cannot find a face in {}'.format(args.image2)
+                visualize(img2, faces2, tm.getFPS())
+                cv.imshow("image2", img2)
+
+                ## [initialize_FaceRecognizerSF]
+                recognizer = cv.FaceRecognizerSF.create(
+                args.face_recognition_model,"")
+                ## [initialize_FaceRecognizerSF]
+
+                ## [facerecognizer]
+                # Align faces
+                face1_align = recognizer.alignCrop(img1, faces1[1][0])
+                face2_align = recognizer.alignCrop(img2, faces2[1][0])
+
+                # Extract features
+                face1_feature = recognizer.feature(face1_align)
+                face2_feature = recognizer.feature(face2_align)
+                ## [facerecognizer]
+
+                cosine_similarity_threshold = 0.363
+                l2_similarity_threshold = 1.128
+
+                ## [match]
+                cosine_score = recognizer.match(face1_feature, face2_feature, cv.FaceRecognizerSF_FR_COSINE)
+                l2_score = recognizer.match(face1_feature, face2_feature, cv.FaceRecognizerSF_FR_NORM_L2)
+                ## [match]
+
+                msg = 'different identities'
+                if cosine_score >= cosine_similarity_threshold:
+                    msg = 'the same identity'
+                print('They have {}. Cosine Similarity: {}, threshold: {} (higher value means higher similarity, max 1.0).'.format(msg, cosine_score, cosine_similarity_threshold))
+
+                msg = 'different identities'
+                if l2_score <= l2_similarity_threshold:
+                    msg = 'the same identity'
+                print('They have {}. NormL2 Distance: {}, threshold: {} (lower value means higher similarity, min 0.0).'.format(msg, l2_score, l2_similarity_threshold))
+            cv.waitKey(0)
+        else: # Omit input to call default camera
+            if args.video is not None:
+                deviceId = args.video
+            else:
+                deviceId = 0
+        # Kết nối đến camera
+        cap = cv2.VideoCapture(0)
+        frameWidth = int(cap.get(cv.CAP_PROP_FRAME_WIDTH)*args.scale)
+        frameHeight = int(cap.get(cv.CAP_PROP_FRAME_HEIGHT)*args.scale)
+        detector.setInputSize([frameWidth, frameHeight])
+        exit_btn = st.button('EXIT')
+        # Lặp vô hạn để lấy và hiển thị các khung hình từ video
+        while True:
+            # Đọc khung hình từ camera
+            ret, frame = cap.read()
+
+            # Kiểm tra xem có thành công đọc khung hình hay không
+            if not ret:
+                break
+            
+            frame = cv.resize(frame, (frameWidth, frameHeight))
+            # Inference
+            tm.start()
+            faces = detector.detect(frame) # faces is a tuple
+            tm.stop()
+
+            # Draw results on the input image
+            visualize(frame, faces, tm.getFPS())
+
+        
+            # Hiển thị khung hình trong container
+            video_container.image(frame, channels="BGR")
+
+            if exit_btn:
+                break
+
+        # Giải phóng tài nguyên và đóng camera khi kết thúc
+        cap.release()
+        
 
     
 

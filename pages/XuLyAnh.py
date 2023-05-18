@@ -1,7 +1,7 @@
 import streamlit as st
 import cv2 
 import joblib
-import chapter03 as c3
+import module.chapter03 as c3
 
 st.sidebar.markdown("# Xu Ly Anh ❄️")
 

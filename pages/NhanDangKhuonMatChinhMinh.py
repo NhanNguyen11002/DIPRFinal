@@ -52,54 +52,59 @@ def visualize(input, faces, fps, thickness=2):
             cv.circle(input, (coords[10], coords[11]), 2, (255, 0, 255), thickness)
             cv.circle(input, (coords[12], coords[13]), 2, (0, 255, 255), thickness)
     cv.putText(input, 'FPS: {:.2f}'.format(fps), (1, 16), cv.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
-if __name__ == '__main__':
-    video_container = st.empty()
-    detector = cv.FaceDetectorYN.create(
-        args.face_detection_model,
-        "",
-        (320, 320),
-        args.score_threshold,
-        args.nms_threshold,
-        args.top_k
-    )
-    recognizer = cv.FaceRecognizerSF.create(
-    args.face_recognition_model,"")
 
-    tm = cv.TickMeter()
+start_btn = st.button('START')
+if start_btn:
+    if __name__ == '__main__':
+        video_container = st.empty()
+        detector = cv.FaceDetectorYN.create(
+            args.face_detection_model,
+            "",
+            (320, 320),
+            args.score_threshold,
+            args.nms_threshold,
+            args.top_k
+        )
+        recognizer = cv.FaceRecognizerSF.create(
+        args.face_recognition_model,"")
 
-    cap = cv.VideoCapture(0)
-    frameWidth = int(cap.get(cv.CAP_PROP_FRAME_WIDTH))
-    frameHeight = int(cap.get(cv.CAP_PROP_FRAME_HEIGHT))
-    detector.setInputSize([frameWidth, frameHeight])
+        tm = cv.TickMeter()
 
-    dem = 0
+        cap = cv.VideoCapture(0)
+        frameWidth = int(cap.get(cv.CAP_PROP_FRAME_WIDTH))
+        frameHeight = int(cap.get(cv.CAP_PROP_FRAME_HEIGHT))
+        detector.setInputSize([frameWidth, frameHeight])
 
-    while True:
-        # Đọc khung hình từ camera
-        ret, frame = cap.read()
+        dem = 0
+        exit_btn = st.button('Exit')
+        while True:
+            # Đọc khung hình từ camera
+            ret, frame = cap.read()
 
-        # Kiểm tra xem có thành công đọc khung hình hay không
-        if not ret:
-            break
-        
-        # Inference
-        tm.start()
-        faces = detector.detect(frame) # faces is a tuple
-        tm.stop()
-        
-        key = cv.waitKey(1)
-        if key == 27:
-            break
-        if faces[1] is not None:
-            face_align = recognizer.alignCrop(frame, faces[1][0])
-            face_feature = recognizer.feature(face_align)
-            test_predict = svc.predict(face_feature)
-            result = mydict[test_predict[0]]
-            cv.putText(frame,result,(1,50),cv.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+            # Kiểm tra xem có thành công đọc khung hình hay không
+            if not ret:
+                break
+            
+            # Inference
+            tm.start()
+            faces = detector.detect(frame) # faces is a tuple
+            tm.stop()
+            
+            key = cv.waitKey(1)
+            if key == 27:
+                break
+            if faces[1] is not None:
+                face_align = recognizer.alignCrop(frame, faces[1][0])
+                face_feature = recognizer.feature(face_align)
+                test_predict = svc.predict(face_feature)
+                result = mydict[test_predict[0]]
+                cv.putText(frame,result,(1,50),cv.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
 
-        # Draw results on the input image
-        visualize(frame, faces, tm.getFPS())
-        video_container.image(frame, channels="BGR")
+            # Draw results on the input image
+            visualize(frame, faces, tm.getFPS())
+            video_container.image(frame, channels="BGR")
+            if exit_btn:
+                break
 
-    # Giải phóng tài nguyên và đóng camera khi kết thúc
-    cap.release()
+        # Giải phóng tài nguyên và đóng camera khi kết thúc
+        cap.release()
